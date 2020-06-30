@@ -5,15 +5,27 @@ using UnityEngine;
 public class SpriteOutline : MonoBehaviour
 {
     [SerializeField]
-    private SpriteRenderer m_spriteRenderer;
+    private SpriteRenderer[] m_spriteRenderers;
 
     public float OutlineThickness
     {
-        set { m_spriteRenderer.material.SetFloat ("_Thickness", value); }
+        set
+        {
+            foreach (var spriteRenderer in m_spriteRenderers)
+            {
+                spriteRenderer.material.SetFloat ("_Thickness", value);
+            }
+        }
     }
 
     public Color OutlineColor
     {
-        set { m_spriteRenderer.material.SetColor ("_OutlineColor", value); }
+        set
+        {
+            foreach (var spriteRenderer in m_spriteRenderers)
+            {
+                spriteRenderer.material.SetColor ("_OutlineColor", value);
+            }
+        }
     }
 }

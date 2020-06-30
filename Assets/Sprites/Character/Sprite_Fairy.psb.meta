@@ -28,7 +28,7 @@ ScriptedImporter:
     sRGBTexture: 1
     spriteMode: 2
     spriteExtrude: 1
-    spriteMeshType: 1
+    spriteMeshType: 0
     alignment: 0
     spritePivot: {x: 0.5, y: 0.5}
     spritePixelsToUnits: 100
@@ -94,10 +94,10 @@ ScriptedImporter:
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 4
-      y: 172
-      width: 62
-      height: 53
+      x: 2
+      y: 171
+      width: 66
+      height: 55
     spriteID: 17987399df642f749bb45c2d0ef7c25a
     internalID: 0
     spriteBone: []
@@ -432,10 +432,10 @@ ScriptedImporter:
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 96
-      y: 4
-      width: 31
-      height: 43
+      x: 94
+      y: 3
+      width: 36
+      height: 45
     spriteID: c2327533480e76e47924a4ae85218e59
     internalID: 0
     spriteBone:
@@ -893,10 +893,10 @@ ScriptedImporter:
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 4
-      y: 100
-      width: 63
-      height: 64
+      x: 2
+      y: 98
+      width: 67
+      height: 67
     spriteID: 686dfdde78cd43a44b5fc3f3b529deae
     internalID: 0
     spriteBone: []
@@ -1211,10 +1211,10 @@ ScriptedImporter:
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 4
-      y: 4
-      width: 84
-      height: 88
+      x: 2
+      y: 2
+      width: 88
+      height: 92
     spriteID: 7cadc68a2e0bd5346a963ec54f9fa93b
     internalID: 0
     spriteBone: []
@@ -1539,10 +1539,10 @@ ScriptedImporter:
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 96
-      y: 55
-      width: 31
-      height: 43
+      x: 94
+      y: 52
+      width: 34
+      height: 48
     spriteID: dd891685edc2dde4587c1731201f9f98
     internalID: 0
     spriteBone: []
@@ -2015,10 +2015,10 @@ ScriptedImporter:
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 96
-      y: 106
-      width: 29
-      height: 45
+      x: 94
+      y: 103
+      width: 33
+      height: 49
     spriteID: 3b5d3b3b9c7aeba48a974fff1c05cb2f
     internalID: 0
     spriteBone: []
@@ -2441,10 +2441,10 @@ ScriptedImporter:
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 96
-      y: 159
-      width: 29
-      height: 44
+      x: 93
+      y: 157
+      width: 34
+      height: 49
     spriteID: 49954a45fde067a4d95552ce46e57296
     internalID: 0
     spriteBone:

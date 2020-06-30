@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class MainPlayerBehavior : PlayerBehavior
 {
-    private enum SelectedType
+    private enum ESelectableType
     {
         Fairy, Floor
     }
@@ -23,27 +23,17 @@ public class MainPlayerBehavior : PlayerBehavior
     private string m_floorUpgradeButtonName;
 
     private MainGameRule m_rule;
-    private SelectedType m_selectedType;
+    private ESelectableType m_selectableType;
 
     private void Start ()
     {
         m_rule = GetComponent<MainGameRule> ();
-        m_rule.UIController.FindUI<UIButton> (m_floorUpgradeButtonName).AddOnClickListener (UpgradeFloor);
     }
 
     private void OnEnable ()
     {
         PlayerInput.OnMouseButtonDownEventMap.AddListener (0, SelectOnMouse);
         PlayerInput.OnMouseButtonUpEventMap.AddListener (0, OnLeftMouseUp);
-    }
-
-    private void UpgradeFloor ()
-    {
-        if (SelectedGameObject)
-        {
-            var floor = SelectedGameObject.GetComponent<Floor> ();
-            m_rule.UpgradeFloor (floor);
-        }
     }
 
     private void SelectOnMouse ()
@@ -66,11 +56,11 @@ public class MainPlayerBehavior : PlayerBehavior
             {
                 if (hitGameObject.CompareTag (m_fairyTag))
                 {
-                    m_selectedType = SelectedType.Fairy;
+                    m_selectableType = ESelectableType.Fairy;
                 }
                 else if (hitGameObject.CompareTag (m_floorTag))
                 {
-                    m_selectedType = SelectedType.Floor;
+                    m_selectableType = ESelectableType.Floor;
                     m_rule.UIController.ActivateUI (m_floorUpgradeUIName);
                 }
 
@@ -80,7 +70,7 @@ public class MainPlayerBehavior : PlayerBehavior
 
         if (bNothing)
         {
-            if (SelectedGameObject && m_selectedType == SelectedType.Floor)
+            if (SelectedGameObject && m_selectableType == ESelectableType.Floor)
             {
                 m_rule.UIController.DeactivateUI (m_floorUpgradeUIName);
             }
@@ -91,7 +81,7 @@ public class MainPlayerBehavior : PlayerBehavior
 
     private void OnLeftMouseUp ()
     {
-        if (m_selectedType == SelectedType.Fairy)
+        if (m_selectableType == ESelectableType.Fairy)
         {
             Deselect ();
         }

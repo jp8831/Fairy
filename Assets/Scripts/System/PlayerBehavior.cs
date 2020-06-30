@@ -35,7 +35,7 @@ public abstract class PlayerBehavior : MonoBehaviour
         get { return m_playerInput; }
     }
 
-    protected GameObject SelectedGameObject
+    public GameObject SelectedGameObject
     {
         get { return m_selectedGameObject; }
     }

@@ -5,6 +5,10 @@ using UnityEngine.AI;
 
 public class Fairy : MonoBehaviour, IPlayerSelectable, IPlayerDraggable
 {
+    [SerializeField]
+    private SpriteRenderer[] m_spriteRenderers;
+
+    [Header ("Outline")]
     [SerializeField, Range (0.0f, 0.015f)]
     private float m_normalOutlineThickness;
     [SerializeField, ColorUsage (true, true)]
@@ -14,6 +18,7 @@ public class Fairy : MonoBehaviour, IPlayerSelectable, IPlayerDraggable
     [SerializeField, ColorUsage (true, true)]
     private Color m_selectedOutlineColor;
 
+    [Header ("Patrol")]
     [SerializeField]
     private float m_patrolRange;
     [SerializeField]
@@ -52,6 +57,7 @@ public class Fairy : MonoBehaviour, IPlayerSelectable, IPlayerDraggable
     private void Start ()
     {
         SetRandomPatrolPoint ();
+        SetRandomColor ();
     }
 
     private void Update ()
@@ -71,6 +77,22 @@ public class Fairy : MonoBehaviour, IPlayerSelectable, IPlayerDraggable
 
         m_navMeshAgent.SetDestination (randomPoint);
         m_lastPatrolUpdateTime = Time.time;
+    }
+
+    private void SetRandomColor ()
+    {
+        Vector4 cmyk = Vector4.zero;
+        cmyk.x = Random.Range (0.0f, 1.0f);
+        cmyk.y = Random.Range (0.0f, 1.0f);
+        cmyk.z = Random.Range (0.0f, 1.0f);
+        cmyk.w = Random.Range (0, 3) < 1 ? Random.Range (0.0f, 0.3f) : Random.Range (0.3f, 1.0f);
+
+        Color rgb = CMYK.CMYKToRGB (cmyk);
+
+        foreach (var spriteRenderer in m_spriteRenderers)
+        {
+            spriteRenderer.color = rgb;
+        }
     }
 
     public void OnSelect ()

@@ -195,7 +195,7 @@ PrefabInstance:
     - target: {fileID: 3754808946338241385, guid: 567bf2a7afa61f84f92646457dad1e8d,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.25
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3754808946338241385, guid: 567bf2a7afa61f84f92646457dad1e8d,
         type: 3}
@@ -287,6 +287,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1275450925}
   - component: {fileID: 1275450924}
+  - component: {fileID: 1275450927}
   - component: {fileID: 1275450926}
   m_Layer: 0
   m_Name: Game Play
@@ -311,22 +312,21 @@ MonoBehaviour:
   m_fairyPrefab: {fileID: 1692741619687575051, guid: 969ae92617068fd4e97fc89ba01ae4e8,
     type: 3}
   m_controlFloor: {fileID: 1355634014}
-  m_fairySpawnPrice: 5
-  m_paperFloor: {fileID: 1938633986}
-  m_startPaperResourece: 10
-  m_maxPaperResource: 999
-  m_paperGainPerLevel: 1
-  m_inkFloor: {fileID: 1139876178}
-  m_startInkResource: 10
-  m_maxInkResource: 999
-  m_inkGainPerLevel: 1
-  m_elecFloor: {fileID: 1756205544272232042}
-  m_startElecResource: 10
-  m_maxElecResource: 999
-  m_elecGainPerLevel: 1
+  m_upgradeButtonName: Button_Upgrade Floor
+  m_upgradeFloorPrice: 5
+  m_spawnButtonName: Button_Spawn Fairy
+  m_spawnFairyPrice: 5
+  m_miniGameInterval: 180
+  m_miniGameSceneName: Play_Mini Game
+  m_miniGameTimerTextName: Text_Mini Game Timer
+  m_upgradeFloorAudio: {fileID: 8300000, guid: 656f5b225d7b94d499c7e9b8b50c5aeb, type: 3}
   m_spawnFairyAudio: {fileID: 8300000, guid: de39e097f1d11da4fad1ddedae53d0e2, type: 3}
   m_menuOpenAudio: {fileID: 8300000, guid: def1569fe30ec9f4c8078b82461fd541, type: 3}
   m_menuCloseAudio: {fileID: 8300000, guid: 8bd8fad57b970d24eb312c4f06bb10dd, type: 3}
+  m_menuUIName: Group_Pause Menu
+  m_openMenuButtonName: Button_Menu
+  m_continueButtonName: Button_Continue
+  m_exitButtonName: Button_Exit
 --- !u!4 &1275450925
 Transform:
   m_ObjectHideFlags: 0
@@ -360,6 +360,33 @@ MonoBehaviour:
   m_floorTag: Floor
   m_floorUpgradeUIName: Group_Floor Menu
   m_floorUpgradeButtonName: Button_Upgrade Floor
+--- !u!114 &1275450927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1275450923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa836a89c7bb9714d9e1b07d055f9d9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_paperFloor: {fileID: 1938633986}
+  m_startPaperResourece: 10
+  m_maxPaperResource: 999
+  m_paperGainPerLevel: 1
+  m_inkFloor: {fileID: 1139876178}
+  m_startInkResource: 10
+  m_maxInkResource: 999
+  m_inkGainPerLevel: 1
+  m_elecFloor: {fileID: 1756205544272232042}
+  m_startElecResource: 10
+  m_maxElecResource: 999
+  m_elecGainPerLevel: 1
+  m_paperTextUIName: Text_Paper
+  m_inkTextUIName: Text_Ink
+  m_elecTextUIName: Text_Elec
 --- !u!1001 &1355634012
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -400,7 +427,7 @@ PrefabInstance:
     - target: {fileID: 3754808946338241385, guid: c0822bc49a0fafb4aafdef8ddd4051bd,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.25
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 3754808946338241385, guid: c0822bc49a0fafb4aafdef8ddd4051bd,
         type: 3}
@@ -522,7 +549,7 @@ PrefabInstance:
     - target: {fileID: 3754808946338241385, guid: 3567bb6187c0c3f4abbfee5409eaee0d,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.75
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3754808946338241385, guid: 3567bb6187c0c3f4abbfee5409eaee0d,
         type: 3}
@@ -694,7 +721,7 @@ PrefabInstance:
     - target: {fileID: 1756205543687659435, guid: 0d206bcbfdfbdf642a678616174cd310,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -6.75
+      value: -6
       objectReference: {fileID: 0}
     - target: {fileID: 1756205543687659435, guid: 0d206bcbfdfbdf642a678616174cd310,
         type: 3}

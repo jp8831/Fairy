@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,39 +12,25 @@ public class MainGameRule : GameRule
     [SerializeField]
     private Floor m_controlFloor;
     [SerializeField]
-    private float m_fairySpawnPrice;
+    private string m_upgradeButtonName;
+    [SerializeField]
+    private float m_upgradeFloorPrice;
+    [SerializeField]
+    private string m_spawnButtonName;
+    [SerializeField]
+    private float m_spawnFairyPrice;
 
-    [Header ("Paper Resource")]
+    [Header ("Mini Game")]
     [SerializeField]
-    private Floor m_paperFloor;
+    private float m_miniGameInterval;
     [SerializeField]
-    private float m_startPaperResourece;
+    private string m_miniGameSceneName;
     [SerializeField]
-    private float m_maxPaperResource;
-    [SerializeField]
-    private float m_paperGainPerLevel;
-
-    [Header ("Ink Resource")]
-    [SerializeField]
-    private Floor m_inkFloor;
-    [SerializeField]
-    private float m_startInkResource;
-    [SerializeField]
-    private float m_maxInkResource;
-    [SerializeField]
-    private float m_inkGainPerLevel;
-
-    [Header ("Elec Resource")]
-    [SerializeField]
-    private Floor m_elecFloor;
-    [SerializeField]
-    private float m_startElecResource;
-    [SerializeField]
-    private float m_maxElecResource;
-    [SerializeField]
-    private float m_elecGainPerLevel;
+    private string m_miniGameTimerTextName;
 
     [Header ("Audio")]
+    [SerializeField]
+    private AudioClip m_upgradeFloorAudio;
     [SerializeField]
     private AudioClip m_spawnFairyAudio;
     [SerializeField]
@@ -51,138 +38,180 @@ public class MainGameRule : GameRule
     [SerializeField]
     private AudioClip m_menuCloseAudio;
 
-    private float m_paperResource;
-    private float m_inkResource;
-    private float m_elecResource;
-    private UIText m_paperText;
-    private UIText m_inkText;
-    private UIText m_elecText;
+    [Header ("Menu")]
+    [SerializeField]
+    private string m_menuUIName;
+    [SerializeField]
+    private string m_openMenuButtonName;
+    [SerializeField]
+    private string m_continueButtonName;
+    [SerializeField]
+    private string m_exitButtonName;
 
-    private UIElement m_pauseMenu;
-    private UIButton m_pauseMenuButton;
+    private float m_timerStartTime;
+
+    private UIElement m_menuUI;
+    private UIButton m_openMenuButton;
     private UIButton m_continueButton;
     private UIButton m_exitButton;
+    private UIButton m_upgradeButton;
+    private UIButton m_spawnButton;
+    private UIText m_timerText;
 
-    public float PaperResource
-    {
-        get { return m_paperResource; }
-        set
-        {
-            m_paperResource = Mathf.Clamp (value, 0.0f, m_maxPaperResource);
-            m_paperText.Value = $"{Mathf.FloorToInt (m_paperResource)}";
-        }
-    }
+    private MainPlayerBehavior m_player;
+    private ResourceManager m_resourceManager;
 
-    public float InkResource
+    private void Start ()
     {
-        get { return m_inkResource; }
-        set
-        {
-            m_inkResource = Mathf.Clamp (value, 0.0f, m_maxInkResource);
-            m_inkText.Value = $"{Mathf.FloorToInt (m_inkResource)}";
-        }
-    }
+        m_player = GetComponent<MainPlayerBehavior> ();
+        m_resourceManager = GetComponent<ResourceManager> ();
 
-    public float ElecResource
-    {
-        get { return m_elecResource; }
-        set
-        {
-            m_elecResource = Mathf.Clamp (value, 0.0f, m_maxElecResource);
-            m_elecText.Value = $"{Mathf.FloorToInt (m_elecResource)}";
-        }
+        m_menuUI = UIController.FindUI<UIElement> (m_menuUIName);
+
+        m_openMenuButton = UIController.FindUI<UIButton> (m_openMenuButtonName);
+        m_openMenuButton.AddOnClickListener (PausePlay);
+
+        m_continueButton = UIController.FindUI<UIButton> (m_continueButtonName);
+        m_continueButton.AddOnClickListener (ContinuePlay);
+
+        m_exitButton = UIController.FindUI<UIButton> (m_exitButtonName);
+        m_exitButton.AddOnClickListener (ExitPlay);
+
+        m_upgradeButton = UIController.FindUI<UIButton> (m_upgradeButtonName);
+        m_upgradeButton.AddOnClickListener (UpgradeSelectedFloor);
+
+        m_spawnButton = UIController.FindUI<UIButton> (m_spawnButtonName);
+        m_spawnButton.AddOnClickListener (SpawnFairyOnSelected);
+
+        m_timerText = UIController.FindUI<UIText> (m_miniGameTimerTextName);
     }
 
     private void OnDestroy ()
     {
-        if (m_pauseMenuButton)
-        {
-            m_pauseMenuButton.RemoveOnClickListener (PausePlay);
-        }
-
-        if (m_continueButton)
-        {
-            m_continueButton.RemoveOnClickListener (ContinuePlay);
-        }
-
-        if (m_exitButton)
-        {
-            m_exitButton.RemoveOnClickListener (ExitPlay);
-        }
+        m_openMenuButton.RemoveOnClickListener (PausePlay);
+        m_continueButton.RemoveOnClickListener (ContinuePlay);
+        m_exitButton.RemoveOnClickListener (ExitPlay);
+        m_upgradeButton.RemoveOnClickListener (UpgradeSelectedFloor);
+        m_spawnButton.RemoveOnClickListener (SpawnFairyOnSelected);
     }
 
     public override void OnPlayStart ()
     {
         base.OnPlayStart ();
 
-        SpawnFairy (m_controlFloor);  
+        m_timerStartTime = Time.time;
 
-        m_paperText = UIController.FindUI<UIText> ("Text_Paper");
-        m_inkText = UIController.FindUI<UIText> ("Text_Ink");
-        m_elecText = UIController.FindUI<UIText> ("Text_Elec");
-
-        PaperResource = m_startPaperResourece;
-        InkResource = m_startInkResource;
-        ElecResource = m_startElecResource;
-
-        m_pauseMenu = UIController.FindUI<UIElement> ("Group_Pause Menu");
-        m_pauseMenuButton = UIController.FindUI<UIButton> ("Button_Menu");
-        m_pauseMenuButton.AddOnClickListener (PausePlay);
-
-        m_continueButton = UIController.FindUI<UIButton> ("Button_Continue");
-        m_continueButton.AddOnClickListener (ContinuePlay);
-
-        m_exitButton = UIController.FindUI<UIButton> ("Button_Exit");
-        m_exitButton.AddOnClickListener (ExitPlay);
+        SpawnFairy (m_controlFloor, true);
     }
 
     public override void OnPlay ()
     {
-        PaperResource += m_paperGainPerLevel * m_paperFloor.Level * Time.deltaTime;
-        InkResource += m_inkGainPerLevel * m_inkFloor.Level * Time.deltaTime;
-        ElecResource += m_elecGainPerLevel * m_elecFloor.Level * Time.deltaTime;
+        float remainTime = Mathf.Max (m_miniGameInterval - (Time.time - m_timerStartTime), 0.0f);
+
+        if (remainTime <= 0.0f)
+        {
+            PlayMiniGame ();
+        }
+
+        int minutes = Mathf.Clamp (Mathf.FloorToInt (remainTime / 60.0f), 0, 99);
+        int seconds = Mathf.Max (0, Mathf.CeilToInt (remainTime - minutes * 60.0f));
+
+        if (seconds == 60)
+        {
+            minutes += 1;
+            seconds = 0;
+        }
+
+        m_timerText.Value = string.Format ("{0:D2}:{1:D2}", minutes, seconds);
     }
 
     public override void OnPlayEnd ()
     {
         base.OnPlayEnd ();
+
+        UIController.DeactivateUI (m_menuUI.ElementID);
     }
 
     private void PausePlay ()
     {
-        UIController.ActivateUI (m_pauseMenu.ElementID);
+        UIController.ActivateUI (m_menuUI.ElementID);
         AudioManager.PlayUIAudio (m_menuOpenAudio);
     }
 
     private void ContinuePlay ()
     {
-        UIController.DeactivateUI (m_pauseMenu.ElementID);
+        UIController.DeactivateUI (m_menuUI.ElementID);
         AudioManager.PlayUIAudio (m_menuCloseAudio);
     }
 
     private void ExitPlay ()
     {
-        UIController.DeactivateUI (m_pauseMenu.ElementID);
-        UIController.DeactivateUI (UICanvasName);
         GameController.StopPlay ();
     }
 
-    public void SpawnFairy (Floor floor)
+    private void PlayMiniGame ()
     {
-        AudioManager.PlayGameAudio (m_spawnFairyAudio);
-
-        var fairy = Instantiate (m_fairyPrefab, Vector3.zero, Quaternion.identity).GetComponent<Fairy> ();
-        fairy.AssignedFloor = floor;
+        Debug.Log ("Mini Game!");
     }
 
-    public void UpgradeFloor (Floor floor)
+    private void UpgradeSelectedFloor ()
     {
-        if (ElecResource < 5.0f)
+        var selected = m_player.SelectedGameObject;
+
+        if (selected)
+        {
+            var floor = selected.GetComponent<Floor> ();
+
+            if (floor)
+            {
+                UpgradeFloor (floor);
+            }
+        }
+    }
+
+    private void UpgradeFloor (Floor floor)
+    {
+        if (m_resourceManager.ElecResource < m_upgradeFloorPrice)
         {
             return;
         }
 
+        AudioManager.PlayGameAudio (m_upgradeFloorAudio);
+
         floor.Level += 1;
-        ElecResource -= 5.0f;
+        m_resourceManager.ElecResource -= m_upgradeFloorPrice;
+    }
+
+    private void SpawnFairyOnSelected ()
+    {
+        var selected = m_player.SelectedGameObject;
+
+        if (selected)
+        {
+            var floor = selected.GetComponent<Floor> ();
+
+            if (floor)
+            {
+                SpawnFairy (floor, false);
+            }
+        }
+    }
+
+    private void SpawnFairy (Floor floor, bool bFree)
+    {
+        if (m_resourceManager.InkResource < m_spawnFairyPrice && bFree == false)
+        {
+            return;
+        }
+
+        AudioManager.PlayGameAudio (m_spawnFairyAudio);
+
+        var fairy = Instantiate (m_fairyPrefab, Vector3.zero, Quaternion.identity).GetComponent<Fairy> ();
+        fairy.AssignedFloor = floor;
+
+        if (bFree == false)
+        {
+            m_resourceManager.InkResource -= m_spawnFairyPrice;
+        }
     }
 }

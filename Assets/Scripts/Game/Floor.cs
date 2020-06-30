@@ -13,6 +13,7 @@ public class Floor : MonoBehaviour, IPlayerSelectable
     private BoxCollider m_navigationCollider;
 
     private int m_level;
+    private int m_fairyCount;
 
     public int MaxLevel
     {
@@ -32,6 +33,11 @@ public class Floor : MonoBehaviour, IPlayerSelectable
                 m_levelObjects[i].SetActive(bActive);
             }
         }
+    }
+
+    public int FairyCount
+    {
+        get { return m_fairyCount; }
     }
 
     public Vector3 RandomPoint
