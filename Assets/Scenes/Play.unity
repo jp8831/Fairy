@@ -324,6 +324,9 @@ MonoBehaviour:
   m_startElecResource: 10
   m_maxElecResource: 999
   m_elecGainPerLevel: 1
+  m_spawnFairyAudio: {fileID: 8300000, guid: de39e097f1d11da4fad1ddedae53d0e2, type: 3}
+  m_menuOpenAudio: {fileID: 8300000, guid: def1569fe30ec9f4c8078b82461fd541, type: 3}
+  m_menuCloseAudio: {fileID: 8300000, guid: 8bd8fad57b970d24eb312c4f06bb10dd, type: 3}
 --- !u!4 &1275450925
 Transform:
   m_ObjectHideFlags: 0

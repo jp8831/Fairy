@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-[ExecuteInEditMode]
 public class UICanvas : UIElement
 {
     [SerializeField]
@@ -15,14 +14,18 @@ public class UICanvas : UIElement
 
     private Canvas m_canvas;
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start ();
+        base.Awake ();
 
         m_canvas = GetComponent<Canvas> ();
-
         m_canvas.sortingLayerName = m_sortLayerName;
         m_canvas.sortingOrder = m_sortIndex;
+    }
+
+    protected override void Start ()
+    {
+        base.Start ();
 
         if (m_bRenderModeCamera && Camera.main)
         {

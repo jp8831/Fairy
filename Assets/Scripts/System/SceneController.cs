@@ -18,6 +18,8 @@ public class SceneController : MonoBehaviour
 {
     private EventMap<SceneTransitionEvent, string, float> m_sceneTransitionEventMap;
     private bool m_bOnTransition;
+    private bool m_bActivateScene;
+    private bool m_bReadyToActivate;
 
     public EventMap<SceneTransitionEvent, string, float> SceneTransitionEventMap
     {
@@ -38,13 +40,23 @@ public class SceneController : MonoBehaviour
         }
     }
 
-    private void Awake()
+    public bool ActivateScene
     {
-        m_sceneTransitionEventMap = new EventMap<SceneTransitionEvent, string, float>();
+        set { m_bActivateScene = value; }
+    }
+
+    public bool ReadyToActivate
+    {
+        get { return m_bReadyToActivate; }
+    }
+
+    private void Awake ()
+    {
+        m_sceneTransitionEventMap = new EventMap<SceneTransitionEvent, string, float> ();
         m_bOnTransition = false;
     }
 
-    public void LoadScene (string sceneName, bool bStartWhenComplete)
+    public void LoadScene (string sceneName, bool bAutoStart)
     {
         if (m_bOnTransition)
         {
@@ -54,17 +66,34 @@ public class SceneController : MonoBehaviour
         m_bOnTransition = true;
 
         InvokeSceneTransitionEvent(SceneTransitionEvent.OnLoadingStart, sceneName, 0.0f);
-        StartCoroutine(LoadSceneCoroutine(sceneName, bStartWhenComplete));
+        StartCoroutine(LoadSceneCoroutine(sceneName, bAutoStart));
+
+        if (bAutoStart == false)
+        {
+            m_bActivateScene = false;
+            m_bReadyToActivate = false;
+        }
     }
 
-    private IEnumerator LoadSceneCoroutine (string sceneName, bool bStartWhenComplete)
+    private IEnumerator LoadSceneCoroutine (string sceneName, bool bAutoStart)
     {
         var loadAsync = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-        loadAsync.allowSceneActivation = bStartWhenComplete;
+        loadAsync.allowSceneActivation = bAutoStart;
 
         while (loadAsync.isDone == false)
         {
             float loadingProgress = loadAsync.progress;
+
+            if (bAutoStart == false)
+            {
+                if (m_bReadyToActivate)
+                {
+                    loadAsync.allowSceneActivation = m_bActivateScene;
+                }
+
+                m_bReadyToActivate = loadingProgress >= 0.9f;
+            }
+
             InvokeSceneTransitionEvent(SceneTransitionEvent.OnLoading, sceneName, loadingProgress);
 
             yield return null;

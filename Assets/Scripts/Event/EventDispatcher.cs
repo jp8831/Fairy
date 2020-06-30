@@ -4,18 +4,18 @@ using System.Collections.Generic;
 
 public class EventMapBase<TId, TEvent> where TEvent : Delegate
 {
-    protected Dictionary<TId, TEvent> m_eventMap;
+    private Dictionary<TId, TEvent> m_listenerMap;
 
     public Dictionary<TId, TEvent> ListenerMap
     {
         get
         {
-            if (m_eventMap == null)
+            if (m_listenerMap == null)
             {
-                m_eventMap = new Dictionary<TId, TEvent>();
+                m_listenerMap = new Dictionary<TId, TEvent>();
             }
 
-            return m_eventMap;
+            return m_listenerMap;
         }
     }
 }
@@ -26,13 +26,13 @@ public class EventMap<TId> : EventMapBase<TId, Action>
     {
         Action found;
 
-        if (m_eventMap.TryGetValue (id, out found))
+        if (ListenerMap.TryGetValue (id, out found))
         {
             found += listener;
         }
         else
         {
-            m_eventMap.Add(id, listener);
+            ListenerMap.Add(id, listener);
         }
     }
 
@@ -53,13 +53,13 @@ public class EventMap<TId, TParam1> : EventMapBase<TId, Action<TParam1>>
     {
         Action<TParam1> found;
 
-        if (m_eventMap.TryGetValue(id, out found))
+        if (ListenerMap.TryGetValue(id, out found))
         {
             found += listener;
         }
         else
         {
-            m_eventMap.Add(id, listener);
+            ListenerMap.Add(id, listener);
         }
     }
 
@@ -80,13 +80,13 @@ public class EventMap<TId, TParam1, TParam2> : EventMapBase<TId, Action<TParam1,
     {
         Action<TParam1, TParam2> found;
 
-        if (m_eventMap.TryGetValue(id, out found))
+        if (ListenerMap.TryGetValue(id, out found))
         {
             found += listener;
         }
         else
         {
-            m_eventMap.Add(id, listener);
+            ListenerMap.Add(id, listener);
         }
     }
 

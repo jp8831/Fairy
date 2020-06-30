@@ -11,6 +11,7 @@ public abstract class GameRule : MonoBehaviour
     private GameController m_gameController;
     private SceneController m_sceneController;
     private UIController m_uiController;
+    private AudioManager m_audioManager;
 
     public GameController GameController
     {
@@ -25,6 +26,11 @@ public abstract class GameRule : MonoBehaviour
     public UIController UIController
     {
         get { return m_uiController; }
+    }
+
+    public AudioManager AudioManager
+    {
+        get { return m_audioManager; }
     }
 
     public string UICanvasName
@@ -42,13 +48,20 @@ public abstract class GameRule : MonoBehaviour
             m_gameController.Rule = this;
 
             m_sceneController = controller.GetComponent<SceneController> ();
-
             m_uiController = controller.GetComponent<UIController> ();
-            m_uiController.ActivateUI (m_uiCanvasName);
+            m_audioManager = controller.GetComponent<AudioManager> ();
         }
     }
 
-    public abstract void OnPlayStart ();
+    public virtual void OnPlayStart ()
+    {
+        m_uiController.ActivateUI (m_uiCanvasName);
+    }
+
     public abstract void OnPlay ();
-    public abstract void OnPlayEnd ();
+
+    public virtual void OnPlayEnd ()
+    {
+        UIController.DeactivateUI (UICanvasName);
+    }
 }

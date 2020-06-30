@@ -7,17 +7,24 @@ public class UIElement : MonoBehaviour
     [SerializeField]
     private bool m_bEnableAtStart = true;
 
-    private UIController m_gameUI;
+    private UIController m_uiController;
 
     public string ElementID
     {
         get { return gameObject.name; }
     }
 
-    private void Awake()
+    protected UIController UIController
     {
-        m_gameUI = GameObject.FindGameObjectWithTag("GameController").GetComponent<UIController>();
-        m_gameUI.RegisterUI(this);
+        get { return m_uiController; }
+    }
+
+    protected virtual void Awake()
+    {
+        var gameController = GameObject.FindGameObjectWithTag ("GameController");
+
+        m_uiController = gameController.GetComponent<UIController>();
+        m_uiController.RegisterUI(this);
     }
 
     protected virtual void Start ()
@@ -27,6 +34,6 @@ public class UIElement : MonoBehaviour
 
     private void OnDestroy()
     {
-        m_gameUI.UnregisterUI(this);
+        m_uiController.UnregisterUI(this);
     }
 }

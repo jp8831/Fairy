@@ -43,6 +43,14 @@ public class MainGameRule : GameRule
     [SerializeField]
     private float m_elecGainPerLevel;
 
+    [Header ("Audio")]
+    [SerializeField]
+    private AudioClip m_spawnFairyAudio;
+    [SerializeField]
+    private AudioClip m_menuOpenAudio;
+    [SerializeField]
+    private AudioClip m_menuCloseAudio;
+
     private float m_paperResource;
     private float m_inkResource;
     private float m_elecResource;
@@ -105,6 +113,8 @@ public class MainGameRule : GameRule
 
     public override void OnPlayStart ()
     {
+        base.OnPlayStart ();
+
         SpawnFairy (m_controlFloor);  
 
         m_paperText = UIController.FindUI<UIText> ("Text_Paper");
@@ -135,31 +145,33 @@ public class MainGameRule : GameRule
 
     public override void OnPlayEnd ()
     {
-        
+        base.OnPlayEnd ();
     }
 
     private void PausePlay ()
     {
         UIController.ActivateUI (m_pauseMenu.ElementID);
+        AudioManager.PlayUIAudio (m_menuOpenAudio);
     }
 
     private void ContinuePlay ()
     {
         UIController.DeactivateUI (m_pauseMenu.ElementID);
+        AudioManager.PlayUIAudio (m_menuCloseAudio);
     }
 
     private void ExitPlay ()
     {
         UIController.DeactivateUI (m_pauseMenu.ElementID);
         UIController.DeactivateUI (UICanvasName);
-
         GameController.StopPlay ();
     }
 
     public void SpawnFairy (Floor floor)
     {
-        var spawned = Instantiate (m_fairyPrefab, Vector3.zero, Quaternion.identity);
-        var fairy = spawned.GetComponent<Fairy> ();
+        AudioManager.PlayGameAudio (m_spawnFairyAudio);
+
+        var fairy = Instantiate (m_fairyPrefab, Vector3.zero, Quaternion.identity).GetComponent<Fairy> ();
         fairy.AssignedFloor = floor;
     }
 

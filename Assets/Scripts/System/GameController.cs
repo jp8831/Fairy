@@ -12,7 +12,10 @@ public class GameController : MonoBehaviour
     private string m_playButtonId;
 
     private SceneController m_sceneController;
+
     private UIController m_uiController;
+    private UIProgress m_loadingProgress;
+
     private GameRule m_rule;
     private bool m_bPlaying;
 
@@ -22,14 +25,20 @@ public class GameController : MonoBehaviour
         set { m_rule = value; }
     }
 
-    private void Start()
+    private void Awake()
     {
         m_sceneController = GetComponent<SceneController>();
         m_uiController = GetComponent<UIController>();
+    }
 
-        m_sceneController.LoadScene(m_uiSceneName, true);
-        m_sceneController.SceneTransitionEventMap.AddListener(SceneTransitionEvent.OnLoadingComplete, OnSceneLoadComplete);
+    private void Start ()
+    {
+        m_sceneController.SceneTransitionEventMap.AddListener (SceneTransitionEvent.OnLoading, OnSceneLoading);
+        m_sceneController.SceneTransitionEventMap.AddListener (SceneTransitionEvent.OnLoadingComplete, OnSceneLoadComplete);
+
         m_sceneController.SceneTransitionEventMap.AddListener (SceneTransitionEvent.OnUnloadingComplete, OnSceneUnloadComplete);
+
+        m_sceneController.LoadScene (m_uiSceneName, true);
     }
 
     private void Update ()
@@ -40,9 +49,20 @@ public class GameController : MonoBehaviour
         }
     }
 
+    private void OnDestroy ()
+    {
+        m_sceneController.SceneTransitionEventMap.RemoveListener (SceneTransitionEvent.OnLoading, OnSceneLoading);
+        m_sceneController.SceneTransitionEventMap.RemoveListener (SceneTransitionEvent.OnLoadingComplete, OnSceneLoadComplete);
+        
+        m_sceneController.SceneTransitionEventMap.RemoveListener (SceneTransitionEvent.OnUnloadingComplete, OnSceneUnloadComplete);
+    }
+
     private void StartPlay()
     {
-        m_sceneController.LoadScene(m_playSceneName, true);
+        m_sceneController.LoadScene(m_playSceneName, false);
+
+        m_uiController.DeactivateUI ("Canvas_Main Menu");
+        m_uiController.ActivateUI ("Canvas_Loading");
     }
 
     public void StopPlay ()
@@ -54,6 +74,22 @@ public class GameController : MonoBehaviour
         m_sceneController.UnloadScene(m_playSceneName);
     }
 
+    private void OnSceneLoading (string sceneName, float progress)
+    {
+        if (sceneName == m_playSceneName)
+        {
+            if (m_sceneController.ReadyToActivate)
+            {
+                m_loadingProgress.Value = 1.0f;
+                m_sceneController.ActivateScene = Input.anyKey;
+            }
+            else
+            {
+                m_loadingProgress.Value = progress;
+            }
+        }
+    }
+
     private void OnSceneLoadComplete (string sceneName, float progress)
     {
         if (sceneName == m_uiSceneName)
@@ -62,11 +98,13 @@ public class GameController : MonoBehaviour
 
             var playButton = m_uiController.FindUI<UIButton>(m_playButtonId);
             playButton.AddOnClickListener(StartPlay);
+
+            m_loadingProgress = m_uiController.FindUI<UIProgress> ("Progress_Loading");
         }
 
         if (sceneName == m_playSceneName)
         {
-            m_uiController.DeactivateUI ("Canvas_Main Menu");
+            m_uiController.DeactivateUI ("Canvas_Loading");
             m_sceneController.ActiveSceneName = m_playSceneName;
 
             m_rule.OnPlayStart ();

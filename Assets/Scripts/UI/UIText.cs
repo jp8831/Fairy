@@ -13,9 +13,9 @@ public class UIText : UIElement
         set { m_text.text = value; }
     }
 
-    protected override void Start ()
+    protected override void Awake ()
     {
-        base.Start ();
+        base.Awake ();
 
         m_text = GetComponent<Text> ();
     }

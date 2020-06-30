@@ -6,29 +6,40 @@ using UnityEngine.Events;
 
 public class UIButton : UIElement
 {
-    private Button m_button;
-    private UnityEvent m_buttonOnClick = new UnityEvent ();
+    [SerializeField]
+    private AudioClip m_clickAudio;
 
-    protected override void Start()
+    private Button m_button;
+    private UnityEvent m_onClick = new UnityEvent ();
+    private AudioManager m_audioManager;
+
+    protected override void Awake()
     {
-        base.Start ();
+        base.Awake ();
 
         m_button = GetComponent<Button>();
         m_button.onClick.AddListener (OnButtonClick);
+
+        m_audioManager = UIController.GetComponent<AudioManager> ();
     }
 
     public void AddOnClickListener(UnityAction onClick)
     {
-        m_buttonOnClick.AddListener (onClick);
+        m_onClick.AddListener (onClick);
     }
 
     public void RemoveOnClickListener(UnityAction onClick)
     {
-        m_buttonOnClick.RemoveListener (onClick);
+        m_onClick.RemoveListener (onClick);
     }
 
     private void OnButtonClick ()
     {
-        m_buttonOnClick.Invoke ();
+        if (m_clickAudio)
+        {
+            m_audioManager.PlayUIAudio (m_clickAudio);
+        }
+
+        m_onClick.Invoke ();
     }
 }
