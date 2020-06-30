@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 1692741619391450356}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
   m_Children: []
   m_Father: {fileID: 1692741619687575053}
   m_RootOrder: 0
@@ -91,8 +91,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1692741619687575053}
   - component: {fileID: -5653557340854471195}
-  - component: {fileID: 1909409028567911508}
+  - component: {fileID: 5363323472482522276}
   - component: {fileID: -1034111928883332372}
+  - component: {fileID: -4233749055583277682}
   m_Layer: 0
   m_Name: Fairy
   m_TagString: Fairy
@@ -124,7 +125,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 1692741619687575051}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.35
+  m_Radius: 0.6
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -137,8 +138,8 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!135 &1909409028567911508
-SphereCollider:
+--- !u!65 &5363323472482522276
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -148,8 +149,8 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.35
-  m_Center: {x: 0, y: 0.35, z: 0}
+  m_Size: {x: 0.6, y: 1, z: 1.15}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &-1034111928883332372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -162,3 +163,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22ed66b81e8165f43a7562e768e304f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_normalOutlineThickness: 0
+  m_normalOutlineColor: {r: 0, g: 0, b: 0, a: 0}
+  m_selectedOutlineThickness: 0.015
+  m_selectedOutlineColor: {r: 0.13895357, g: 1, b: 0, a: 1}
+  m_patrolRange: 5
+  m_patrolTime: 3
+--- !u!114 &-4233749055583277682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1692741619687575051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20831badc85ecd94babfb636f1d4f5e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_spriteRenderer: {fileID: 1692741619391450358}

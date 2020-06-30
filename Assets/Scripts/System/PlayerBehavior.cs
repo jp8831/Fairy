@@ -3,13 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngineInternal;
 
+public interface IPlayerSelectable
+{
+    void OnSelect ();
+    void OnDeselect ();
+}
+
+public interface IPlayerDraggable
+{
+    void OnDragStart ();
+    void OnDrag ();
+    void OnDragEnd ();
+}
+
 public abstract class PlayerBehavior : MonoBehaviour
 {
-    protected PlayerController m_playerController;
-    protected PlayerInput m_playerInput;
+    private PlayerController m_playerController;
+    private PlayerInput m_playerInput;
 
-    protected GameObject m_selectedGameObject;
-    protected ISelectable m_selected;
+    private GameObject m_selectedGameObject;
+    private IPlayerSelectable m_selectable;
+    private IPlayerDraggable m_draggable;
+
+    public PlayerController PlayerController
+    {
+        get { return m_playerController; }
+    }
+
+    public PlayerInput PlayerInput
+    {
+        get { return m_playerInput; }
+    }
+
+    protected GameObject SelectedGameObject
+    {
+        get { return m_selectedGameObject; }
+    }
 
     private void Awake()
     {
@@ -24,28 +53,12 @@ public abstract class PlayerBehavior : MonoBehaviour
         }
     }
 
-    protected GameObject SelectOnMouse (LayerMask selectLayer, string selectTag, bool bQueryTrigger)
+    private void Update ()
     {
-        GameObject selectedGameObject = null;
-
-        var triggerInteraction = bQueryTrigger ? QueryTriggerInteraction.Collide : QueryTriggerInteraction.Ignore;
-        Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-        RaycastHit rayHit;
-
-        if (Physics.Raycast (ray, out rayHit, float.PositiveInfinity, selectLayer.value, triggerInteraction))
+        if (m_draggable != null)
         {
-            GameObject hitGameObject = rayHit.collider.gameObject;
-
-            if (hitGameObject.CompareTag (selectTag))
-            {
-                if (Select (hitGameObject))
-                {
-                    selectedGameObject = hitGameObject;
-                }
-            }
+            m_draggable.OnDrag ();
         }
-
-        return selectedGameObject;
     }
 
     protected bool Select (GameObject target)
@@ -55,12 +68,9 @@ public abstract class PlayerBehavior : MonoBehaviour
             return false;
         }
 
-        if (m_selectedGameObject)
-        {
-            Deselect ();
-        }
+        Deselect ();
 
-        var selectable = target.GetComponent<ISelectable> ();
+        var selectable = target.GetComponent<IPlayerSelectable> ();
 
         if (selectable == null)
         {
@@ -68,8 +78,15 @@ public abstract class PlayerBehavior : MonoBehaviour
         }
 
         m_selectedGameObject = target;
-        m_selected = selectable;
-        m_selected.OnSelect ();
+        m_selectable = selectable;
+        m_selectable.OnSelect ();
+
+        m_draggable = m_selectedGameObject.GetComponent<IPlayerDraggable> ();
+
+        if (m_draggable != null)
+        {
+            m_draggable.OnDragStart ();
+        }
 
         return true;
     }
@@ -78,8 +95,14 @@ public abstract class PlayerBehavior : MonoBehaviour
     {
         if (m_selectedGameObject)
         {
-            m_selected.OnDeselect ();
-            m_selected = null;
+            if (m_draggable != null)
+            {
+                m_draggable.OnDragEnd ();
+                m_draggable = null;
+            }
+
+            m_selectable.OnDeselect ();
+            m_selectable = null;
             m_selectedGameObject = null;
         }
     }

@@ -16,10 +16,13 @@ public class UIElement : MonoBehaviour
 
     private void Awake()
     {
-        gameObject.SetActive(m_bEnableAtStart);
-
         m_gameUI = GameObject.FindGameObjectWithTag("GameController").GetComponent<UIController>();
         m_gameUI.RegisterUI(this);
+    }
+
+    protected virtual void Start ()
+    {
+        gameObject.SetActive (m_bEnableAtStart);
     }
 
     private void OnDestroy()

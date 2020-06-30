@@ -7,19 +7,28 @@ using UnityEngine.Events;
 public class UIButton : UIElement
 {
     private Button m_button;
+    private UnityEvent m_buttonOnClick = new UnityEvent ();
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start ();
+
         m_button = GetComponent<Button>();
+        m_button.onClick.AddListener (OnButtonClick);
     }
 
     public void AddOnClickListener(UnityAction onClick)
     {
-        m_button.onClick.AddListener(onClick);
+        m_buttonOnClick.AddListener (onClick);
     }
 
     public void RemoveOnClickListener(UnityAction onClick)
     {
-        m_button.onClick.RemoveListener(onClick);
+        m_buttonOnClick.RemoveListener (onClick);
+    }
+
+    private void OnButtonClick ()
+    {
+        m_buttonOnClick.Invoke ();
     }
 }

@@ -6,7 +6,12 @@ using UnityEngine.SceneManagement;
 
 public enum SceneTransitionEvent
 {
-    OnStart, OnLoading, OnComplete
+    OnLoadingStart,
+    OnLoading,
+    OnLoadingComplete,
+    OnUnloadingStart,
+    OnUnloading,
+    OnUnloadingComplete
 }
 
 public class SceneController : MonoBehaviour
@@ -48,7 +53,7 @@ public class SceneController : MonoBehaviour
 
         m_bOnTransition = true;
 
-        InvokeSceneTransitionEvent(SceneTransitionEvent.OnStart, sceneName, 0.0f);
+        InvokeSceneTransitionEvent(SceneTransitionEvent.OnLoadingStart, sceneName, 0.0f);
         StartCoroutine(LoadSceneCoroutine(sceneName, bStartWhenComplete));
     }
 
@@ -65,7 +70,37 @@ public class SceneController : MonoBehaviour
             yield return null;
         }
 
-        InvokeSceneTransitionEvent (SceneTransitionEvent.OnComplete, sceneName, 1.0f);
+        InvokeSceneTransitionEvent (SceneTransitionEvent.OnLoadingComplete, sceneName, 1.0f);
+        m_bOnTransition = false;
+    }
+
+    public void UnloadScene (string sceneName)
+    {
+        if (m_bOnTransition)
+        {
+            return;
+        }
+
+        m_bOnTransition = true;
+
+        InvokeSceneTransitionEvent (SceneTransitionEvent.OnUnloadingStart, sceneName, 0.0f);
+        StartCoroutine (UnloadSceneCoroutine (sceneName));
+    }
+
+    private IEnumerator UnloadSceneCoroutine (string sceneName)
+    {
+        var unloadAsync = SceneManager.UnloadSceneAsync (sceneName);
+        unloadAsync.allowSceneActivation = true;
+
+        while (unloadAsync.isDone == false)
+        {
+            float loadingProgress = unloadAsync.progress;
+            InvokeSceneTransitionEvent (SceneTransitionEvent.OnUnloading, sceneName, loadingProgress);
+
+            yield return null;
+        }
+
+        InvokeSceneTransitionEvent (SceneTransitionEvent.OnUnloadingComplete, sceneName, 1.0f);
         m_bOnTransition = false;
     }
 

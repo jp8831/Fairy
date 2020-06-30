@@ -137,7 +137,7 @@ GameObject:
   - component: {fileID: 1756205543687659434}
   m_Layer: 0
   m_Name: Floor 01
-  m_TagString: Untagged
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -190,6 +190,7 @@ MonoBehaviour:
   - {fileID: 1756205544272633480}
   - {fileID: 1756205544327707629}
   - {fileID: 1756205544429349535}
+  m_navigationCollider: {fileID: 839764572593104416}
 --- !u!1 &1756205544215855985
 GameObject:
   m_ObjectHideFlags: 0

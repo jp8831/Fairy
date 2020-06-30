@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using UnityEngine;
 
 public abstract class GameRule : MonoBehaviour
@@ -7,9 +8,29 @@ public abstract class GameRule : MonoBehaviour
     [SerializeField]
     private string m_uiCanvasName;
 
-    protected GameController m_gameController;
-    protected SceneController m_sceneController;
-    protected UIController m_uiController;
+    private GameController m_gameController;
+    private SceneController m_sceneController;
+    private UIController m_uiController;
+
+    public GameController GameController
+    {
+        get { return m_gameController; }
+    }
+
+    public SceneController SceneController
+    {
+        get { return m_sceneController; }
+    }
+
+    public UIController UIController
+    {
+        get { return m_uiController; }
+    }
+
+    public string UICanvasName
+    {
+        get { return m_uiCanvasName; }
+    }
 
     private void Awake ()
     {
@@ -28,5 +49,6 @@ public abstract class GameRule : MonoBehaviour
     }
 
     public abstract void OnPlayStart ();
+    public abstract void OnPlay ();
     public abstract void OnPlayEnd ();
 }

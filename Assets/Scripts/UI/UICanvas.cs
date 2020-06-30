@@ -15,8 +15,10 @@ public class UICanvas : UIElement
 
     private Canvas m_canvas;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start ();
+
         m_canvas = GetComponent<Canvas> ();
 
         m_canvas.sortingLayerName = m_sortLayerName;

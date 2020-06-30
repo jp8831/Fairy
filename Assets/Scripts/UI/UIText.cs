@@ -13,8 +13,10 @@ public class UIText : UIElement
         set { m_text.text = value; }
     }
 
-    private void Start ()
+    protected override void Start ()
     {
+        base.Start ();
+
         m_text = GetComponent<Text> ();
     }
 }
