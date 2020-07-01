@@ -31,8 +31,7 @@ public class Painter : MonoBehaviour
     private Image m_brushImage;
 
     private float m_brushSize;
-    private Texture2D m_paintTexture;
-    private RenderTexture m_paintRenderTexture;
+    private RenderTexture m_paintTexture;
 
     public bool DrawEnabled
     {
@@ -80,19 +79,25 @@ public class Painter : MonoBehaviour
 
     public Texture2D PaintTexture
     {
-        get { return m_paintTexture; }
+        get
+        {
+            var paintTextureCopy = new Texture2D (m_paintTexture.width, m_paintTexture.height, TextureFormat.ARGB32, false);
+
+            RenderTexture.active = m_paintTexture;
+
+            paintTextureCopy.ReadPixels (new Rect (0, 0, m_paintSize.x, m_paintSize.y), 0, 0);
+            paintTextureCopy.Apply ();
+
+            return paintTextureCopy;
+        }
     }
 
     void Start ()
     {
-        m_paintTexture = new Texture2D (m_paintSize.x, m_paintSize.y, TextureFormat.RGBA32, false);
-        m_paintRenderTexture = new RenderTexture (m_paintSize.x, m_paintSize.y, 0, RenderTextureFormat.ARGB32);
+        m_paintTexture = new RenderTexture (m_paintSize.x, m_paintSize.y, 0, RenderTextureFormat.ARGB32);
 
-        RenderTexture.active = m_paintRenderTexture;
-
-        m_paintImage.texture = m_paintRenderTexture;
-        m_paintCamera.targetTexture = m_paintRenderTexture;
-        //m_paintCamera.Render ();
+        m_paintImage.texture = m_paintTexture;
+        m_paintCamera.targetTexture = m_paintTexture;
 
         ClearPaintTexture ();
 
@@ -120,7 +125,7 @@ public class Painter : MonoBehaviour
 
     public void ClearPaintTexture ()
     {
-        Graphics.SetRenderTarget(m_paintRenderTexture);
+        Graphics.SetRenderTarget(m_paintTexture);
         GL.Clear(true, true, m_backgroundColor, 1.0f);
     }
 }

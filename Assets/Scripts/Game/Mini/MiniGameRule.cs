@@ -128,13 +128,14 @@ public class MiniGameRule : GameRule
             for (int y = 0; y < paintTexture.height; y++)
             {
                 Color color = paintTexture.GetPixel (x, y);
-                Color targetColor = m_targetImage.Sprite.texture.GetPixelBilinear ((float) x / paintTexture.width, (float) y / paintTexture.height); ;
+                Color targetColor = m_targetImage.Sprite.texture.GetPixelBilinear ((float) x / paintTexture.width, (float) y / paintTexture.height);
+                float diff = Vector3.Distance (ColorConvertor.RGBToYUV (color), ColorConvertor.RGBToYUV (targetColor));
 
-                colorDiff += Vector3.Distance (ColorConvertor.RGBToYUV (color), ColorConvertor.RGBToYUV (targetColor));
+                colorDiff += diff;
             }
         }
 
-        float score = colorDiff;
+        float score = colorDiff / (paintTexture.width + paintTexture.height);
         m_scoreText.Value = $"{score:F0}";
 
         UIController.ActivateUI (m_scoreUIName);
