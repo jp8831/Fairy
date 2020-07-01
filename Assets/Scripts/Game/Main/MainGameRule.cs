@@ -48,18 +48,16 @@ public class MainGameRule : GameRule
     [SerializeField]
     private string m_exitButtonName;
 
-    private float m_timerStartTime;
-
     private UIElement m_menuUI;
     private UIButton m_openMenuButton;
     private UIButton m_continueButton;
     private UIButton m_exitButton;
     private UIButton m_upgradeButton;
     private UIButton m_spawnButton;
-    private UIText m_timerText;
 
     private MainPlayerBehavior m_player;
     private ResourceManager m_resourceManager;
+    private Timer m_miniGameTimer;
 
     private void Start ()
     {
@@ -83,7 +81,9 @@ public class MainGameRule : GameRule
         m_spawnButton = UIController.FindUI<UIButton> (m_spawnButtonName);
         m_spawnButton.AddOnClickListener (SpawnFairyOnSelected);
 
-        m_timerText = UIController.FindUI<UIText> (m_miniGameTimerTextName);
+        m_miniGameTimer = GetComponent<Timer> ();
+        m_miniGameTimer.RemainTimeUI = UIController.FindUI<UIText> (m_miniGameTimerTextName);
+        m_miniGameTimer.EndEvent.AddListener (PlayMiniGame);
     }
 
     private void OnDestroy ()
@@ -93,36 +93,19 @@ public class MainGameRule : GameRule
         m_exitButton.RemoveOnClickListener (ExitPlay);
         m_upgradeButton.RemoveOnClickListener (UpgradeSelectedFloor);
         m_spawnButton.RemoveOnClickListener (SpawnFairyOnSelected);
+
+        m_miniGameTimer.EndEvent.RemoveListener (PlayMiniGame);
     }
 
     public override void OnPlayStart ()
     {
         base.OnPlayStart ();
 
-        m_timerStartTime = Time.time;
-
         SpawnFairy (m_controlFloor, true);
     }
 
     public override void OnPlay ()
     {
-        float remainTime = Mathf.Max (m_miniGameInterval - (Time.time - m_timerStartTime), 0.0f);
-
-        if (remainTime <= 0.0f)
-        {
-            PlayMiniGame ();
-        }
-
-        int minutes = Mathf.Clamp (Mathf.FloorToInt (remainTime / 60.0f), 0, 99);
-        int seconds = Mathf.Max (0, Mathf.CeilToInt (remainTime - minutes * 60.0f));
-
-        if (seconds == 60)
-        {
-            minutes += 1;
-            seconds = 0;
-        }
-
-        m_timerText.Value = string.Format ("{0:D2}:{1:D2}", minutes, seconds);
     }
 
     public override void OnPlayEnd ()

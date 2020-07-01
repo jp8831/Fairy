@@ -289,6 +289,7 @@ GameObject:
   - component: {fileID: 1275450924}
   - component: {fileID: 1275450927}
   - component: {fileID: 1275450926}
+  - component: {fileID: 1275450928}
   m_Layer: 0
   m_Name: Game Play
   m_TagString: Untagged
@@ -387,6 +388,19 @@ MonoBehaviour:
   m_paperTextUIName: Text_Paper
   m_inkTextUIName: Text_Ink
   m_elecTextUIName: Text_Elec
+--- !u!114 &1275450928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1275450923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b23cb0515ca22d84ba7c65dddb68a9c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_endTime: 30
 --- !u!1001 &1355634012
 PrefabInstance:
   m_ObjectHideFlags: 0

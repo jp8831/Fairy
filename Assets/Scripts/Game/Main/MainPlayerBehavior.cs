@@ -36,6 +36,12 @@ public class MainPlayerBehavior : PlayerBehavior
         PlayerInput.OnMouseButtonUpEventMap.AddListener (0, OnLeftMouseUp);
     }
 
+    private void OnDisable ()
+    {
+        PlayerInput.OnMouseButtonDownEventMap.RemoveListener (0, SelectOnMouse);
+        PlayerInput.OnMouseButtonUpEventMap.RemoveListener (0, OnLeftMouseUp);
+    }
+
     private void SelectOnMouse ()
     {
         if (EventSystem.current.currentSelectedGameObject)

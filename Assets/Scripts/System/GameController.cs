@@ -91,11 +91,13 @@ public class GameController : MonoBehaviour
 
     public void StopPlay ()
     {
+        string playSceneName = m_rule.gameObject.scene.name;
+
         m_rule.OnPlayEnd ();
         m_rule = null;
 
         m_sceneController.ActiveSceneName = gameObject.scene.name;
-        m_sceneController.UnloadScene(m_mainGamePlaySceneName);
+        m_sceneController.UnloadScene(playSceneName);
 
         m_bPlaying = false;
     }

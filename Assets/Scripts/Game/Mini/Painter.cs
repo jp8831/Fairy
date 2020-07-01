@@ -8,41 +8,93 @@ public class Painter : MonoBehaviour
     [SerializeField]
     private Camera m_paintCamera;
     [SerializeField]
-    private Color m_backgroundColor;
+    private RawImage m_paintImage;
     [SerializeField]
-    private RenderTexture m_paintTexture;
+    private Vector2Int m_paintSize;
+    [SerializeField]
+    private Color m_backgroundColor;
     [SerializeField]
     private RectTransform m_paintCanvasTransform;
     [SerializeField]
-    private RectTransform m_brushCanvasTransform;
+    private string m_paintLayerName;
+    [SerializeField]
+    private string m_defaultLayerName;
 
+    [Header ("Brush")]
     [SerializeField]
     private float m_minBrushSize;
     [SerializeField]
     private float m_maxBrushSize;
-
     [SerializeField]
-    private Slider m_brushSizeSlider;
+    private RectTransform m_burshTransform;
     [SerializeField]
-    private Slider m_cSlider;
-    [SerializeField]
-    private Slider m_mSlider;
-    [SerializeField]
-    private Slider m_ySlider;
-    [SerializeField]
-    private Slider m_kSlider;
+    private Image m_brushImage;
 
     private float m_brushSize;
-    private Vector4 m_cmyk;
+    private Texture2D m_paintTexture;
+    private RenderTexture m_paintRenderTexture;
 
     public bool DrawEnabled
     {
-        set { m_brushCanvasTransform.gameObject.layer = value ? LayerMask.NameToLayer("Paint") : LayerMask.NameToLayer("Default"); }
+        set
+        {
+            var paintLayer = LayerMask.NameToLayer (m_paintLayerName);
+            var defaultLayer = LayerMask.NameToLayer (m_defaultLayerName);
+            m_burshTransform.gameObject.layer = value ? paintLayer : defaultLayer;
+        }
+    }
+
+    public float MaxBrushSize
+    {
+        get { return m_maxBrushSize; }
+    }
+
+    public float MinBrushSize
+    {
+        get { return m_minBrushSize; }
+    }
+
+    public float BrushSize
+    {
+        get { return m_brushSize; }
+        set
+        {
+            m_brushSize = value;
+            m_burshTransform.SetSizeWithCurrentAnchors (RectTransform.Axis.Horizontal, m_brushSize);
+            m_burshTransform.SetSizeWithCurrentAnchors (RectTransform.Axis.Vertical, m_brushSize);
+        }
+    }
+
+    public Vector4 BrushColorCMYK
+    {
+        get
+        {
+            return ColorConvertor.RGBToCMYK (m_brushImage.color);
+        }
+
+        set
+        {
+            m_brushImage.color = ColorConvertor.CMYKToRGB (value);
+        }
+    }
+
+    public Texture2D PaintTexture
+    {
+        get { return m_paintTexture; }
     }
 
     void Start ()
     {
-        ClearPaintTexture();
+        m_paintTexture = new Texture2D (m_paintSize.x, m_paintSize.y, TextureFormat.RGBA32, false);
+        m_paintRenderTexture = new RenderTexture (m_paintSize.x, m_paintSize.y, 0, RenderTextureFormat.ARGB32);
+
+        RenderTexture.active = m_paintRenderTexture;
+
+        m_paintImage.texture = m_paintRenderTexture;
+        m_paintCamera.targetTexture = m_paintRenderTexture;
+        //m_paintCamera.Render ();
+
+        ClearPaintTexture ();
 
         Vector3 paintCameraPosition = m_paintCamera.transform.localPosition;
         paintCameraPosition.x = m_paintCanvasTransform.localPosition.x;
@@ -55,68 +107,20 @@ public class Painter : MonoBehaviour
         float paintCameraAspectRatio = paintCanvasSize.x / paintCanvasSize.y;
         m_paintCamera.aspect = paintCameraAspectRatio;
 
-        //m_paintCanvasTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 2.0f * m_paintCamera.orthographicSize);
-        //m_paintCanvasTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 2.0f * m_paintCamera.orthographicSize);
-
-        m_brushSize = 0.5f * (m_minBrushSize + m_maxBrushSize);
-        m_brushSizeSlider.minValue = m_minBrushSize;
-        m_brushSizeSlider.maxValue = m_maxBrushSize;
-        m_brushSizeSlider.value = m_brushSize;
-
-        Image brushImage = m_brushCanvasTransform.GetComponentInChildren<Image>();
-        m_cmyk = ColorConvertor.RGBToCMYK(brushImage.color);
-        m_cSlider.value = m_cmyk.x;
-        m_mSlider.value = m_cmyk.y;
-        m_ySlider.value = m_cmyk.z;
-        m_kSlider.value = m_cmyk.w;
-
+        BrushSize = 0.5f * (m_minBrushSize + m_maxBrushSize);
         DrawEnabled = false;
     }
 
     void Update ()
     {
-        bool bDraw = Input.GetMouseButton (0);
-        DrawEnabled = bDraw;
-
         Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3 localMousePos = m_paintCanvasTransform.InverseTransformPoint (worldMousePos);
-        m_brushCanvasTransform.localPosition = new Vector3 (localMousePos.x, localMousePos.y, m_brushCanvasTransform.localPosition.z);
+        m_burshTransform.localPosition = new Vector3 (localMousePos.x, localMousePos.y, m_burshTransform.localPosition.z);
     }
 
     public void ClearPaintTexture ()
     {
-        Graphics.SetRenderTarget(m_paintTexture);
+        Graphics.SetRenderTarget(m_paintRenderTexture);
         GL.Clear(true, true, m_backgroundColor, 1.0f);
-    }
-
-    public void OnCyanChange (Slider slider)
-    {
-        m_cmyk.x = slider.value;
-        m_brushCanvasTransform.GetComponentInChildren<Image>().color = ColorConvertor.CMYKToRGB(m_cmyk);
-    }
-
-    public void OnMagentaChange(Slider slider)
-    {
-        m_cmyk.y = slider.value;
-        m_brushCanvasTransform.GetComponentInChildren<Image>().color = ColorConvertor.CMYKToRGB(m_cmyk);
-    }
-
-    public void OnYellowChange(Slider slider)
-    {
-        m_cmyk.z = slider.value;
-        m_brushCanvasTransform.GetComponentInChildren<Image>().color = ColorConvertor.CMYKToRGB(m_cmyk);
-    }
-
-    public void OnKeyChange(Slider slider)
-    {
-        m_cmyk.w = slider.value;
-        m_brushCanvasTransform.GetComponentInChildren<Image>().color = ColorConvertor.CMYKToRGB(m_cmyk);
-    }
-
-    public void OnBrushSizeChange (Slider slider)
-    {
-        m_brushSize = slider.value;
-        m_brushCanvasTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, m_brushSize);
-        m_brushCanvasTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, m_brushSize);
     }
 }
