@@ -151,7 +151,7 @@ public class MainGameRule : GameRule
 
     private void PlayMiniGame ()
     {
-        Debug.Log ("Mini Game!");
+        GameController.StartPlay (m_miniGameSceneName);
     }
 
     private void UpgradeSelectedFloor ()

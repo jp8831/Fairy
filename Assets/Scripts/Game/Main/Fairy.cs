@@ -87,7 +87,7 @@ public class Fairy : MonoBehaviour, IPlayerSelectable, IPlayerDraggable
         cmyk.z = Random.Range (0.0f, 1.0f);
         cmyk.w = Random.Range (0, 3) < 1 ? Random.Range (0.0f, 0.3f) : Random.Range (0.3f, 1.0f);
 
-        Color rgb = CMYK.CMYKToRGB (cmyk);
+        Color rgb = ColorConvertor.CMYKToRGB (cmyk);
 
         foreach (var spriteRenderer in m_spriteRenderers)
         {

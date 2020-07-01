@@ -44,10 +44,19 @@ public class Painter : MonoBehaviour
     {
         ClearPaintTexture();
 
-        m_paintCamera.transform.position = m_paintCanvasTransform.position + Vector3.back;
+        Vector3 paintCameraPosition = m_paintCamera.transform.localPosition;
+        paintCameraPosition.x = m_paintCanvasTransform.localPosition.x;
+        paintCameraPosition.y = m_paintCanvasTransform.localPosition.y;
+        m_paintCamera.transform.localPosition = paintCameraPosition;
 
-        m_paintCanvasTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 2.0f * m_paintCamera.orthographicSize);
-        m_paintCanvasTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 2.0f * m_paintCamera.orthographicSize);
+        Vector2 paintCanvasSize = m_paintCanvasTransform.rect.size;
+        m_paintCamera.orthographicSize = 0.5f * paintCanvasSize.y;
+
+        float paintCameraAspectRatio = paintCanvasSize.x / paintCanvasSize.y;
+        m_paintCamera.aspect = paintCameraAspectRatio;
+
+        //m_paintCanvasTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 2.0f * m_paintCamera.orthographicSize);
+        //m_paintCanvasTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 2.0f * m_paintCamera.orthographicSize);
 
         m_brushSize = 0.5f * (m_minBrushSize + m_maxBrushSize);
         m_brushSizeSlider.minValue = m_minBrushSize;
@@ -55,7 +64,7 @@ public class Painter : MonoBehaviour
         m_brushSizeSlider.value = m_brushSize;
 
         Image brushImage = m_brushCanvasTransform.GetComponentInChildren<Image>();
-        m_cmyk = CMYK.RGBToCMYK(brushImage.color);
+        m_cmyk = ColorConvertor.RGBToCMYK(brushImage.color);
         m_cSlider.value = m_cmyk.x;
         m_mSlider.value = m_cmyk.y;
         m_ySlider.value = m_cmyk.z;
@@ -69,8 +78,9 @@ public class Painter : MonoBehaviour
         bool bDraw = Input.GetMouseButton (0);
         DrawEnabled = bDraw;
 
-        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        m_brushCanvasTransform.position = mousePos;
+        Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 localMousePos = m_paintCanvasTransform.InverseTransformPoint (worldMousePos);
+        m_brushCanvasTransform.localPosition = new Vector3 (localMousePos.x, localMousePos.y, m_brushCanvasTransform.localPosition.z);
     }
 
     public void ClearPaintTexture ()
@@ -82,25 +92,25 @@ public class Painter : MonoBehaviour
     public void OnCyanChange (Slider slider)
     {
         m_cmyk.x = slider.value;
-        m_brushCanvasTransform.GetComponentInChildren<Image>().color = CMYK.CMYKToRGB(m_cmyk);
+        m_brushCanvasTransform.GetComponentInChildren<Image>().color = ColorConvertor.CMYKToRGB(m_cmyk);
     }
 
     public void OnMagentaChange(Slider slider)
     {
         m_cmyk.y = slider.value;
-        m_brushCanvasTransform.GetComponentInChildren<Image>().color = CMYK.CMYKToRGB(m_cmyk);
+        m_brushCanvasTransform.GetComponentInChildren<Image>().color = ColorConvertor.CMYKToRGB(m_cmyk);
     }
 
     public void OnYellowChange(Slider slider)
     {
         m_cmyk.z = slider.value;
-        m_brushCanvasTransform.GetComponentInChildren<Image>().color = CMYK.CMYKToRGB(m_cmyk);
+        m_brushCanvasTransform.GetComponentInChildren<Image>().color = ColorConvertor.CMYKToRGB(m_cmyk);
     }
 
     public void OnKeyChange(Slider slider)
     {
         m_cmyk.w = slider.value;
-        m_brushCanvasTransform.GetComponentInChildren<Image>().color = CMYK.CMYKToRGB(m_cmyk);
+        m_brushCanvasTransform.GetComponentInChildren<Image>().color = ColorConvertor.CMYKToRGB(m_cmyk);
     }
 
     public void OnBrushSizeChange (Slider slider)

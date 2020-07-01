@@ -154,8 +154,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_uiSceneName: System_UI
-  m_playSceneName: Play
+  m_playScenePrefix: Play
+  m_mainGamePlaySceneName: Play_Main
   m_playButtonId: Button_Play
+  m_mainMenuUIName: Canvas_Main Menu
+  m_loadingUIName: Canvas_Loading
+  m_loadingProgressUIName: Progress_Loading
+  m_loadingTextUIName: Image_Loading Text
+  m_loadingCompleteTextUIName: Image_Loading Complete Text
 --- !u!4 &702799065
 Transform:
   m_ObjectHideFlags: 0

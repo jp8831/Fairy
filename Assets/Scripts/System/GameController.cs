@@ -7,9 +7,23 @@ public class GameController : MonoBehaviour
     [SerializeField]
     private string m_uiSceneName;
     [SerializeField]
-    private string m_playSceneName;
+    private string m_playScenePrefix;
+    [SerializeField]
+    private string m_mainGamePlaySceneName;
+
+    [Header ("UI")]
     [SerializeField]
     private string m_playButtonId;
+    [SerializeField]
+    private string m_mainMenuUIName;
+    [SerializeField]
+    private string m_loadingUIName;
+    [SerializeField]
+    private string m_loadingProgressUIName;
+    [SerializeField]
+    private string m_loadingTextUIName;
+    [SerializeField]
+    private string m_loadingCompleteTextUIName;
 
     private SceneController m_sceneController;
 
@@ -57,30 +71,45 @@ public class GameController : MonoBehaviour
         m_sceneController.SceneTransitionEventMap.RemoveListener (SceneTransitionEvent.OnUnloadingComplete, OnSceneUnloadComplete);
     }
 
-    private void StartPlay()
+    public void StartPlay(string playSceneName)
     {
-        m_sceneController.LoadScene(m_playSceneName, false);
+        if (m_bPlaying)
+        {
+            StopPlay ();
+        }
 
-        m_uiController.DeactivateUI ("Canvas_Main Menu");
-        m_uiController.ActivateUI ("Canvas_Loading");
+        m_bPlaying = true;
+
+        m_sceneController.LoadScene(playSceneName, false);
+        m_uiController.DeactivateUI (m_mainMenuUIName);
+
+        m_loadingProgress.Value = 0.0f;
+        m_uiController.ActivateUI (m_loadingUIName);
+        m_uiController.ActivateUI (m_loadingTextUIName);
+        m_uiController.DeactivateUI (m_loadingCompleteTextUIName);
     }
 
     public void StopPlay ()
     {
-        m_bPlaying = false;
         m_rule.OnPlayEnd ();
+        m_rule = null;
 
         m_sceneController.ActiveSceneName = gameObject.scene.name;
-        m_sceneController.UnloadScene(m_playSceneName);
+        m_sceneController.UnloadScene(m_mainGamePlaySceneName);
+
+        m_bPlaying = false;
     }
 
     private void OnSceneLoading (string sceneName, float progress)
     {
-        if (sceneName == m_playSceneName)
+        if (sceneName.StartsWith (m_playScenePrefix))
         {
             if (m_sceneController.ReadyToActivate)
             {
                 m_loadingProgress.Value = 1.0f;
+                m_uiController.DeactivateUI (m_loadingTextUIName);
+                m_uiController.ActivateUI (m_loadingCompleteTextUIName);
+
                 m_sceneController.ActivateScene = Input.anyKey;
             }
             else
@@ -94,29 +123,33 @@ public class GameController : MonoBehaviour
     {
         if (sceneName == m_uiSceneName)
         {
-            m_uiController.ActivateUI("Canvas_Main Menu");
+            m_uiController.ActivateUI(m_mainMenuUIName);
 
             var playButton = m_uiController.FindUI<UIButton>(m_playButtonId);
-            playButton.AddOnClickListener(StartPlay);
+            playButton.AddOnClickListener(OnClickPlayButton);
 
-            m_loadingProgress = m_uiController.FindUI<UIProgress> ("Progress_Loading");
+            m_loadingProgress = m_uiController.FindUI<UIProgress> (m_loadingProgressUIName);
         }
 
-        if (sceneName == m_playSceneName)
+        if (sceneName.StartsWith (m_playScenePrefix))
         {
-            m_uiController.DeactivateUI ("Canvas_Loading");
-            m_sceneController.ActiveSceneName = m_playSceneName;
+            m_uiController.DeactivateUI (m_loadingUIName);
+            m_sceneController.ActiveSceneName = m_mainGamePlaySceneName;
 
             m_rule.OnPlayStart ();
-            m_bPlaying = true;
         }
     }
 
     private void OnSceneUnloadComplete (string sceneName, float progress)
     {
-        if (sceneName == m_playSceneName)
+        if (sceneName.StartsWith (m_playScenePrefix) && m_bPlaying == false)
         {
-            m_uiController.ActivateUI ("Canvas_Main Menu");
+            m_uiController.ActivateUI (m_mainMenuUIName);
         }
+    }
+
+    private void OnClickPlayButton ()
+    {
+        StartPlay (m_mainGamePlaySceneName);
     }
 }

@@ -316,8 +316,8 @@ MonoBehaviour:
   m_upgradeFloorPrice: 5
   m_spawnButtonName: Button_Spawn Fairy
   m_spawnFairyPrice: 5
-  m_miniGameInterval: 180
-  m_miniGameSceneName: Play_Mini Game
+  m_miniGameInterval: 5
+  m_miniGameSceneName: Play_Paint
   m_miniGameTimerTextName: Text_Mini Game Timer
   m_upgradeFloorAudio: {fileID: 8300000, guid: 656f5b225d7b94d499c7e9b8b50c5aeb, type: 3}
   m_spawnFairyAudio: {fileID: 8300000, guid: de39e097f1d11da4fad1ddedae53d0e2, type: 3}
@@ -676,7 +676,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 1
   m_VoxelSize: 0.025
   m_BuildHeightMesh: 0
-  m_NavMeshData: {fileID: 23800000, guid: d25220500f449b24c93b809b6ec2a9ad, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 0eb320e6f87280646baa19e26da750d1, type: 2}
 --- !u!4 &2010369759
 Transform:
   m_ObjectHideFlags: 0
