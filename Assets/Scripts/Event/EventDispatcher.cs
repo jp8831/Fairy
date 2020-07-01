@@ -24,11 +24,9 @@ public class EventMap<TId> : EventMapBase<TId, Action>
 {
     public void AddListener (TId id, Action listener)
     {
-        Action found;
-
-        if (ListenerMap.TryGetValue (id, out found))
+        if (ListenerMap.ContainsKey (id))
         {
-            found += listener;
+            ListenerMap[id] += listener;
         }
         else
         {
@@ -38,11 +36,9 @@ public class EventMap<TId> : EventMapBase<TId, Action>
 
     public void RemoveListener (TId id, Action listener)
     {
-        Action found;
-
-        if (ListenerMap.TryGetValue (id, out found))
+        if (ListenerMap.ContainsKey (id))
         {
-            found -= listener;
+            ListenerMap[id] -= listener;
         }
     }
 }
@@ -51,25 +47,21 @@ public class EventMap<TId, TParam1> : EventMapBase<TId, Action<TParam1>>
 {
     public void AddListener(TId id, Action<TParam1> listener)
     {
-        Action<TParam1> found;
-
-        if (ListenerMap.TryGetValue(id, out found))
+        if (ListenerMap.ContainsKey (id))
         {
-            found += listener;
+            ListenerMap[id] += listener;
         }
         else
         {
-            ListenerMap.Add(id, listener);
+            ListenerMap.Add (id, listener);
         }
     }
 
     public void RemoveListener(TId id, Action<TParam1> listener)
     {
-        Action<TParam1> found;
-
-        if (ListenerMap.TryGetValue(id, out found))
+        if (ListenerMap.ContainsKey (id))
         {
-            found -= listener;
+            ListenerMap[id] -= listener;
         }
     }
 }
@@ -78,25 +70,21 @@ public class EventMap<TId, TParam1, TParam2> : EventMapBase<TId, Action<TParam1,
 {
     public void AddListener(TId id, Action<TParam1, TParam2> listener)
     {
-        Action<TParam1, TParam2> found;
-
-        if (ListenerMap.TryGetValue(id, out found))
+        if (ListenerMap.ContainsKey (id))
         {
-            found += listener;
+            ListenerMap[id] += listener;
         }
         else
         {
-            ListenerMap.Add(id, listener);
+            ListenerMap.Add (id, listener);
         }
     }
 
     public void RemoveListener(TId id, Action<TParam1, TParam2> listener)
     {
-        Action<TParam1, TParam2> found;
-
-        if (ListenerMap.TryGetValue(id, out found))
+        if (ListenerMap.ContainsKey (id))
         {
-            found -= listener;
+            ListenerMap[id] -= listener;
         }
     }
 }

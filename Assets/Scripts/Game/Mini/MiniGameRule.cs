@@ -102,7 +102,6 @@ public class MiniGameRule : GameRule
 
     public override void OnPlay ()
     {
-        m_painter.DrawEnabled = (m_bFinished == false) && Input.GetMouseButton (0);
         m_painter.BrushColorCMYK = new Vector4 (m_cSlider.Value, m_mSlider.Value, m_ySlider.Value, m_kSlider.Value);
         m_painter.BrushSize = m_brushSizeSlider.Value;
     }

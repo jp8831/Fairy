@@ -122,7 +122,7 @@ public class PlayerInput : MonoBehaviour
         {
             if (Input.GetMouseButton (onMouseEvent.Key))
             {
-                onMouseEvent.Value.Invoke ();
+                onMouseEvent.Value?.Invoke ();
             }
         }
 
@@ -130,7 +130,7 @@ public class PlayerInput : MonoBehaviour
         {
             if (Input.GetMouseButtonUp (onMouseUpEvent.Key))
             {
-                onMouseUpEvent.Value.Invoke ();
+                onMouseUpEvent.Value?.Invoke ();
             }
         }
 
@@ -138,7 +138,7 @@ public class PlayerInput : MonoBehaviour
         {
             if (Input.GetMouseButtonDown (onMouseDownEvent.Key))
             {
-                onMouseDownEvent.Value.Invoke ();
+                onMouseDownEvent.Value?.Invoke ();
             }
         }
 
